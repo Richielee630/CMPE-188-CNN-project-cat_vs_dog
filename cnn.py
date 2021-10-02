@@ -107,18 +107,40 @@ def predict():
     model = load_model(model_file_name)
     print(model.summary())
  
-    img_path = './data/test/cat/cat.4021.jpg'
+    img_path = './data/test/cat/cat.5001.jpg'
     img = image.load_img(img_path, target_size=(150, 150))
     img_tensor = image.img_to_array(img)
     img_tensor = img_tensor / 255
     img_tensor = np.expand_dims(img_tensor, axis=0)
     # 其形状为 (1, 150, 150, 3)
+
+    result = model.predict(img_tensor)
+    print("the prediction result for this picture is: ", result)
+
     plt.imshow(img_tensor[0])
     plt.show()
  
-    result = model.predict(img_tensor)
-    print(result)
+    #result = model.predict(img_tensor)
+    #print(result)
  
+CLASS_NAMES = ["Cat", "Dog"]
+
+def predict_sigle(model, img_path):
+
+    img = image.load_img(img_path, target_size=(150, 150))
+    img_tensor = image.img_to_array(img)
+    img_tensor = img_tensor / 255
+    img_tensor = np.expand_dims(img_tensor, axis=0)
+
+    prediction = model.predict(img_tensor)
+
+    if prediction[0] > 0.5:
+        predict_class = CLASS_NAMES[1]
+    else:
+        predict_class = CLASS_NAMES[0]
+
+    return predict_class
+
  
 # 画出count个预测结果和图像
 def fig_predict_result(model, count):
@@ -154,12 +176,17 @@ def fig_predict_result(model, count):
  
  
 if __name__ == '__main__':
-    model = init_model()
-    fit(model)
+    #model = init_model()
+    model = load_model(model_file_name)
+    #fit(model)
  
     # 利用训练好的模型预测结果。
-    predict()
+    #predict()
+
+    img_path = './data/test/cat/cat.4153.jpg'
+    predict_class = predict_sigle(model, img_path)
+    print(predict_class)
  
-    model = load_model(model_file_name)
+    #model = load_model(model_file_name)
     #随机查看10个预测结果并画出它们
-    fig_predict_result(model, 10)
+    #fig_predict_result(model, 10)
