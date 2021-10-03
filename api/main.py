@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from keras.saving.save import load_model
 from keras.preprocessing.image import ImageDataGenerator, image
 from numpy.lib.npyio import load
+from numpy.lib.ufunclike import fix
 import uvicorn
 import numpy as np
 from io import BytesIO
@@ -27,8 +28,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#MODEL = tf.keras.models.load_model("../'cat_dog_model.h5'")
-model = load_model('../cat_dog_model.h5')
+#MODEL = tf.keras.models.load_model('../cat_dog_model.h5')
+model = load_model('../model_backup/v2.3_batch=128, val_batch=256, epoch=11, acc=0.90, loss=0.25, val_loss=0.33/cat_dog_model.h5')
 
 CLASS_NAMES = ["Cat", "Dog"]
 
@@ -46,7 +47,7 @@ def read_file_as_image(data) -> np.ndarray:
 async def predict(
     file: UploadFile = File(...)
 ):
-    print(file)
+    # print(file)
     img = read_file_as_image(await file.read())
     PIL_image = Image.fromarray(np.uint8(img)).convert('RGB')
     
@@ -59,7 +60,6 @@ async def predict(
     #img_batch = np.expand_dims(img, 0)
     #prediction = model.predict(img_batch)
     
-
     # img_path = 'C:/Users/Richie Lee/Desktop/College/1 San Jose State University/9 2021 fall semester/CMPE 188/project/CNN_cat_dog_CN/data/test/dog/dog.4073.jpg'
     # img = image.load_img(img_path, target_size=(150, 150))
     # img.show()
@@ -68,6 +68,8 @@ async def predict(
     img_tensor = np.expand_dims(img_tensor, axis=0)
     prediction = model.predict(img_tensor)
 
+    confidence = np.max(prediction[0])
+
     #predicted_class = CLASS_NAMES[np.argmax(prediction[0])]
     if prediction[0] > 0.5:
         predict_class = CLASS_NAMES[1]
@@ -75,6 +77,7 @@ async def predict(
         predict_class = CLASS_NAMES[0]
     return {
         'class': predict_class,
+        'sigmoid': float(confidence)
     }
 
 if __name__ == "__main__":
