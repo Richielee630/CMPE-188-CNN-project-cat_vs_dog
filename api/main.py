@@ -52,7 +52,7 @@ async def predict(
     PIL_image = Image.fromarray(np.uint8(img)).convert('RGB')
     
     PIL_image = PIL_image.resize((150, 150))
-    PIL_image.show()
+    # PIL_image.show()
 
     #img = Image.open(file)
     #img.show()
@@ -68,16 +68,18 @@ async def predict(
     img_tensor = np.expand_dims(img_tensor, axis=0)
     prediction = model.predict(img_tensor)
 
-    confidence = np.max(prediction[0])
+    
 
     #predicted_class = CLASS_NAMES[np.argmax(prediction[0])]
     if prediction[0] > 0.5:
         predict_class = CLASS_NAMES[1]
+        confidence = np.max(prediction[0])
     else:
         predict_class = CLASS_NAMES[0]
+        confidence = 1 - np.max(prediction[0])
     return {
         'class': predict_class,
-        'sigmoid': float(confidence)
+        'confidence': float(confidence)
     }
 
 if __name__ == "__main__":

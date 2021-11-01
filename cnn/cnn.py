@@ -194,7 +194,7 @@ if __name__ == '__main__':
     
     model = load_model(model_file_name)
     # ann_viz(model, title="CNN")
-    top_layer = model.layers[0]
-    plt.imshow(top_layer.get_weights()[0][:, :, :, 0].squeeze(), cmap='gray')
+    #top_layer = model.layers[0]
+    #plt.imshow(top_layer.get_weights()[0][:, :, :, 0].squeeze(), cmap='gray')
     #随机查看10个预测结果并画出它们
     fig_predict_result(model, 10)
