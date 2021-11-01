@@ -114,7 +114,6 @@ def predict():
     img_tensor = image.img_to_array(img)
     img_tensor = img_tensor / 255
     img_tensor = np.expand_dims(img_tensor, axis=0)
-    # 其形状为 (1, 150, 150, 3)
 
     result = model.predict(img_tensor)
     print("the prediction result for this picture is: ", result)
@@ -147,7 +146,6 @@ def predict_sigle(model, img_path):
     return predict_class
 
  
-# 画出count个预测结果和图像
 def fig_predict_result(model, count):
     test_datagen = ImageDataGenerator(rescale=1. / 255)
     test_generator = test_datagen.flow_from_directory(
@@ -158,7 +156,6 @@ def fig_predict_result(model, count):
  
     text_labels = []
     plt.figure(figsize=(30, 20))
-    # 迭代器可以迭代很多条数据，但我这里只取第一个结果看看
     for batch, label in test_generator:
         pred = model.predict(batch)
         for i in range(count):
@@ -169,14 +166,12 @@ def fig_predict_result(model, count):
             else:
                 text_labels.append('cat')
  
-            # 4列，若干行的图
             plt.subplot(count / 4 + 1, 4, i + 1)
             plt.title('This is a ' + text_labels[i])
             imgplot = plt.imshow(batch[i])
  
         plt.show()
- 
-        # 可以接着画很多，但是只是随机看看几条结果。所以这里停下来。
+
         break
  
  
@@ -185,7 +180,6 @@ if __name__ == '__main__':
     #model = load_model(model_file_name)
     #fit(model)
  
-    # 利用训练好的模型预测结果。
     #predict()
 
     # img_path = './data/test/cat/cat.4153.jpg'
@@ -196,5 +190,4 @@ if __name__ == '__main__':
     # ann_viz(model, title="CNN")
     #top_layer = model.layers[0]
     #plt.imshow(top_layer.get_weights()[0][:, :, :, 0].squeeze(), cmap='gray')
-    #随机查看10个预测结果并画出它们
     fig_predict_result(model, 10)
